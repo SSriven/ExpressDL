@@ -375,7 +375,7 @@ model.add(Relu())
 
 ### LeNet-5
 
-ExpressD实现了LeNet-5，导入即可直接使用
+ExpressDL实现了LeNet-5，导入即可直接使用
 
 **LeNet5(x_train, t_train, x_test, t_test, epochs=30, weight_decay_lambda=0, sample_batches=True,** 
 
@@ -448,5 +448,23 @@ Adam:
 from optimizers.adam import Adam
 op = Adam(lr=0.001, beta1=0.9, beta2=0.999)
 op.update(model) #对model进行参数更新
+```
+
+# 模型保存与加载
+
+## 模型保存
+
+```python
+from layers.utils import save_model
+save_model(model,"model.pkl")
+```
+
+
+
+## 模型加载
+
+```python
+from layers.utils import load_model
+model = load_model("model.pkl")
 ```
 
