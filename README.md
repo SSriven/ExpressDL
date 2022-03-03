@@ -310,7 +310,143 @@ dropout = Dropout(drop_ratio = 0.5,name="Doupout_1")
 
 ### Model
 
+**Model(x_train, t_train, epochs=30, weight_decay_lambda=0, sample_batches=True,**
+
+​         **batch_size=100, optimizer='SGD', optimizer_param={'lr': 0.01}, learning_rate_decay=1, verbose=True)**
+
+属性：
+
+| 属性         | 说明                 |
+| ------------ | -------------------- |
+| loss_history | 记录每次迭代的损失值 |
+| acc_history  | 记录每个epoch的精度  |
+
+初始化参数：
+
+| 参数                | 说明                                                         | 类型    |      |
+| ------------------- | ------------------------------------------------------------ | ------- | ---- |
+| x_train             | 训练数据                                                     | 张量    | 必选 |
+| t_train             | 训练数据标签                                                 | 张量    | 必选 |
+| epochs              | 训练时期数，默认为30                                         | int     | 可选 |
+| weight_decay_lambda | 权值衰减系数，默认为0                                        | float   | 可选 |
+| sample_batches      | 是否按照mini-batcha训练，默认为True,如果为False，则将所有数据一次性计算; | boolean | 可选 |
+| batch_size          | mini-batch大小，默认为100                                    | int     | 可选 |
+| optimizer           | 梯度下降优化器,默认为sgd，可选的有：momentum,adagrad,adam;   | string  | 可选 |
+| optimizer_param     | 优化器参数，例如学习率等等;默认为{'lr': 0.01}                | dict    | 可选 |
+| learning_rate_decay | 学习率衰减系数,默认为1;                                      | float   | 可选 |
+| verbose             | 是否打印训练进度,默认为True;                                 | boolean | 可选 |
+
+方法：
+
+**Model.add(layer,loss=False)**
+
+将layer添加进model中，layer属于Layer类，loss=False表示添加的layer不是损失函数那一层。例如:
+
+```python
+from net.model import Model
+model = Model(x_train,t_train)
+model.add(Dense(hidden_size=100))
+model.add(Relu())
+```
+
+**Model.init_weights()**
+
+初始化Model中各层的参数，注意：在使用前向传播时必须先调用此方法
+
+**Model.desc()**
+
+输出各层的详细信息,注意：该方法需要在调用init_weight方法之后使用
+
+**Model.predict(x,train_flg=False)**
+
+对输入的x进行预测，train_flg=False表示此次预测表示训练，如果在训练过程中，train_flg需要置为True，返回预测值
+
+**Model.accuracy(x,t)**
+
+计算准确度，x是输入数据，t是正确解标签,返回一个浮点数
+
+**Model.test(x_test,t_test)**
+
+计算测试集的精度,返回一个浮点数
+
+**Model.train()**
+
+开始训练
+
 ### LeNet-5
 
+ExpressD实现了LeNet-5，导入即可直接使用
+
+**LeNet5(x_train, t_train, x_test, t_test, epochs=30, weight_decay_lambda=0, sample_batches=True,** 
+
+​        **batch_size=100, optimizer="SGD", optimizer_param={"lr": 0.01}, learning_rate_decay=1, verbose=True)**
+
+参数和Model的一致
+
+示例：
+
+```python
+from net.lenet5 import LeNet5
+from dataset.mnist import load_mnist
+
+(x_train, t_train), (x_test, t_test) = load_mnist(flatten=False)
+x_train = x_train[:10000]
+t_train = t_train[:10000]
+x_test = x_test[:1000]
+t_test = t_test[:1000]
+
+lenet5 = LeNet5(x_train,t_train,x_test,t_test,epochs=10,optimizer='adam',weight_decay_lambda=0.01,learning_rate_decay=0.95)
+lenet5.train()#开始训练
+lenet5.desc()#打印网络详细信息
+```
+
+**LeNet5.train()**
+
+开始训练
+
+**LeNet5.getModel()**
+
+返回一个Model对象
+
+**LeNet5.predict(x)**
+
+对x预测
+
+**LeNet5.desc()**
+
+打印网络详细信息
+
 ## optimizers
+
+SGD:随机梯度下降
+
+```python
+from optimizers.sgd import SGD
+op = SGD(lr=0.001)
+op.update(model) #对model进行参数更新
+```
+
+Momentum:
+
+```python
+from optimizers.momentum import Momentum
+op = Momentum(lr=0.001,momentum=0.9)
+op.update(model) #对model进行参数更新
+```
+
+AdaGrad：
+
+```python
+from optimizers.adagrad import AdaGrad
+op = AdaGrad(lr=0.001)
+op.update(model) #对model进行参数更新
+```
+
+Adam:
+
+```python
+from optimizers.adam import Adam
+op = Adam(lr=0.001, beta1=0.9, beta2=0.999)
+op.update(model) #对model进行参数更新
+```
 
